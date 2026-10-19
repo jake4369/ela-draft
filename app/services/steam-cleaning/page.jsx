@@ -1,4 +1,5 @@
 import SteamCleaningHero from "@/app/components/services/dedicated-services/steam-cleaning/SteamCleaningHero";
+import SteamCleaningOverview from "@/app/components/services/dedicated-services/steam-cleaning/SteamCleaningOverview";
 
 const pageTitle = "Steam Cleaning in Wolverhampton | ELA Pressure Washing";
 
@@ -39,6 +40,7 @@ export default function SteamCleaningPage() {
   return (
     <main>
       <SteamCleaningHero />
+      <SteamCleaningOverview />
     </main>
   );
 }
