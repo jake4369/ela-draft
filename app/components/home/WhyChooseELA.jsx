@@ -102,7 +102,7 @@ export default function WhyChooseELA() {
 
             {/* SUBTLE CONTACT LINK */}
             <Link
-              href="https://ela-draft.vercel.app/contact"
+              href="/contact"
               className="group mt-6 inline-flex items-center gap-2 rounded-sm text-sm font-semibold text-[#086bd4] underline-offset-4 transition-colors hover:text-[#054d99] hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#086bd4] sm:text-base"
             >
               Discuss Your Project
