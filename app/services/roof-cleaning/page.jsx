@@ -8,7 +8,7 @@ import RoofClosingCTA from "@/app/components/services/dedicated-services/roof-cl
 const pageTitle = "Roof Cleaning & Moss Removal in Wolverhampton | ELA";
 
 const pageDescription =
-  "Roof cleaning and moss removal in Wolverhampton and the West Midlands. Careful roof scraping and suitable biocide treatments. Contact ELA for a quote.";
+  "Professional roof cleaning and moss removal in Wolverhampton and the West Midlands. Careful roof scraping and specialist treatments where appropriate. Request a free quote.";
 
 export const metadata = {
   title: {
@@ -27,8 +27,10 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/assets/opengraph.png",
-        alt: "ELA Pressure Washing exterior cleaning services",
+        url: "/assets/images/services/roof-page-hero.webp",
+        width: 2048,
+        height: 1152,
+        alt: "Residential roof cleaning project with ELA Pressure Washing equipment on site",
       },
     ],
   },
@@ -36,7 +38,7 @@ export const metadata = {
     card: "summary_large_image",
     title: pageTitle,
     description: pageDescription,
-    images: ["/assets/opengraph.png"],
+    images: ["/assets/images/services/roof-page-hero.webp"],
   },
 };
 
