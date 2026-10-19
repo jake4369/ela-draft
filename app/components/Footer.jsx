@@ -14,21 +14,18 @@ import {
 const exploreLinks = [
   { label: "Home", href: "/" },
   { label: "About ELA", href: "/about" },
-  {
-    label: "Why Choose ELA",
-    href: "/#why-choose-heading",
-  },
+  { label: "Why Choose ELA", href: "/#why-choose" },
   { label: "All Services", href: "/services" },
   { label: "Our Work", href: "/gallery" },
   {
     label: "Customer Reviews",
-    href: "/#testimonials-heading",
+    href: "/#customer-reviews",
   },
   {
     label: "Areas We Cover",
     href: "/areas-we-cover",
   },
-  { label: "FAQs", href: "/#faq-heading" },
+  { label: "FAQs", href: "/#home-faqs" },
   { label: "Contact", href: "/contact" },
 ];
 

@@ -12,13 +12,41 @@ export default function Home() {
   return (
     <main>
       <Hero />
+
       <ServicesOverview />
+
       <BeforeAfterShowcase />
-      <WhyChooseELA />
+
+      <div
+        id="why-choose"
+        className="scroll-mt-24 sm:scroll-mt-28 xl:scroll-mt-32"
+      >
+        <WhyChooseELA />
+      </div>
+
       <TrustStrip />
-      <Testimonials />
-      <AreasWeCover />
-      <FAQs />
+
+      <div
+        id="customer-reviews"
+        className="scroll-mt-24 sm:scroll-mt-28 xl:scroll-mt-32"
+      >
+        <Testimonials />
+      </div>
+
+      <div
+        id="home-areas"
+        className="scroll-mt-24 sm:scroll-mt-28 xl:scroll-mt-32"
+      >
+        <AreasWeCover />
+      </div>
+
+      <div
+        id="home-faqs"
+        className="scroll-mt-24 sm:scroll-mt-28 xl:scroll-mt-32"
+      >
+        <FAQs />
+      </div>
+
       <FinalCTA />
     </main>
   );
