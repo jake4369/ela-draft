@@ -37,6 +37,7 @@ export default function RoofCleaningProcess() {
           className="
             grid items-start gap-10
             sm:gap-12
+            lg:items-center
             lg:grid-cols-[minmax(0,0.9fr)_minmax(0,1.1fr)]
             lg:gap-16 xl:gap-20
           "
