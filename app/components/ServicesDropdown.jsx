@@ -2,45 +2,53 @@
 
 import { useEffect, useId, useRef, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 import { IconArrowUpRight, IconChevronDown } from "@tabler/icons-react";
 
-const LIVE_SITE = "https://ela-draft.vercel.app/";
-
+// Change ready to true when each service page is completed.
 const services = [
   {
     title: "Driveway Cleaning",
     description: "Driveways and block paving",
-    href: `${LIVE_SITE}/services/driveway-cleaning`,
+    href: "/services/driveway-cleaning",
+    ready: true,
   },
   {
     title: "Patio Cleaning",
     description: "Patios and outdoor spaces",
-    href: `${LIVE_SITE}/services/patio-cleaning`,
+    href: "/services/patio-cleaning",
+    ready: true,
   },
   {
     title: "Roof Cleaning",
-    description: "Roof moss and surface care",
-    href: `${LIVE_SITE}/services/roof-cleaning`,
+    description: "Roof moss removal and surface care",
+    href: "/services/roof-cleaning",
+    ready: false,
   },
   {
     title: "Commercial Pressure Washing",
     description: "Business exterior cleaning",
-    href: `${LIVE_SITE}/services/commercial-pressure-washing`,
+    href: "/services/commercial-pressure-washing",
+    ready: false,
   },
   {
     title: "Steam Cleaning",
     description: "Specialist heat-assisted cleaning",
-    href: `${LIVE_SITE}/services/steam-cleaning`,
+    href: "/services/steam-cleaning",
+    ready: false,
   },
   {
     title: "Heritage Brickwork Cleaning",
     description: "Care for traditional masonry",
-    href: `${LIVE_SITE}/services/heritage-brickwork-cleaning`,
+    href: "/services/heritage-brickwork-cleaning",
+    ready: false,
   },
 ];
 
-const allServicesHref = `${LIVE_SITE}/services`;
+const availableServices = services.filter((service) => service.ready);
+
+const allServicesHref = "/services";
 
 // DESKTOP DROPDOWN
 
@@ -49,7 +57,14 @@ export function DesktopServicesDropdown() {
   const containerRef = useRef(null);
   const buttonRef = useRef(null);
   const panelId = useId();
+  const pathname = usePathname();
 
+  // Close the menu after route changes, including browser history.
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  // Handle outside interactions and Escape.
   useEffect(() => {
     if (!open) return;
 
@@ -88,6 +103,10 @@ export function DesktopServicesDropdown() {
       document.removeEventListener("keydown", handleKeyDown);
     };
   }, [open]);
+
+  function closeDropdown() {
+    setOpen(false);
+  }
 
   return (
     <div ref={containerRef} className="relative">
@@ -134,7 +153,7 @@ export function DesktopServicesDropdown() {
           shadow-[0_20px_50px_rgba(6,21,44,0.16)]
         "
       >
-        {/* MENU HEADING */}
+        {/* Menu heading */}
         <div
           className="
             mb-4 flex items-center
@@ -161,6 +180,7 @@ export function DesktopServicesDropdown() {
 
           <Link
             href={allServicesHref}
+            onClick={closeDropdown}
             className="
               inline-flex shrink-0 items-center
               gap-1.5 rounded-sm
@@ -176,12 +196,13 @@ export function DesktopServicesDropdown() {
           </Link>
         </div>
 
-        {/* SERVICE LINKS */}
+        {/* Available service links */}
         <ul className="grid grid-cols-2 gap-2">
-          {services.map((service) => (
-            <li key={service.title} className="min-w-0">
+          {availableServices.map((service) => (
+            <li key={service.href} className="min-w-0">
               <Link
                 href={service.href}
+                onClick={closeDropdown}
                 className="
                   group/item flex h-full
                   min-h-[82px] flex-col
@@ -286,9 +307,9 @@ export function MobileServicesDropdown() {
         </Link>
 
         <ul className="border-t border-slate-200">
-          {services.map((service) => (
+          {availableServices.map((service) => (
             <li
-              key={service.title}
+              key={service.href}
               className="
                 border-b border-slate-200/70
                 last:border-b-0
@@ -313,7 +334,9 @@ export function MobileServicesDropdown() {
                 <IconArrowUpRight
                   size={16}
                   stroke={1.8}
-                  className="shrink-0 text-[#086bd4]"
+                  className="
+                    shrink-0 text-[#086bd4]
+                  "
                   aria-hidden="true"
                 />
               </Link>
