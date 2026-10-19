@@ -12,6 +12,10 @@ import { IconArrowUpRight } from "@tabler/icons-react";
 
 const navigation = [
   {
+    label: "Home",
+    href: "/",
+  },
+  {
     label: "About ELA",
     href: "/about",
   },
