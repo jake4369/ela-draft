@@ -3,6 +3,7 @@ import PatioOverview from "@/app/components/services/dedicated-services/patio-cl
 import PatioCleaningProcess from "@/app/components/services/dedicated-services/patio-cleaning/PatioCleaningProcess";
 import PatioProjectShowcase from "@/app/components/services/dedicated-services/patio-cleaning/PatioProjectShowcase";
 import PatioCleaningFAQ from "@/app/components/services/dedicated-services/patio-cleaning/PatioCleaningFAQs";
+import PatioClosingCTA from "@/app/components/services/dedicated-services/patio-cleaning/PatioClosingCTA";
 
 const pageTitle = "Patio Cleaning in Wolverhampton | ELA Pressure Washing";
 
@@ -47,6 +48,7 @@ export default function PatioCleaningPage() {
       <PatioCleaningProcess />
       <PatioProjectShowcase />
       <PatioCleaningFAQ />
+      <PatioClosingCTA />
     </main>
   );
 }
