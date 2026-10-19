@@ -6,35 +6,34 @@ import {
   MobileServicesDropdown,
 } from "./ServicesDropdown";
 
-import { IconArrowUpRight, IconMenu2, IconX } from "@tabler/icons-react";
+import MobileMenuShell from "./MobileMenuShell";
 
-const LIVE_SITE = "https://ela-draft.vercel.app/";
+import { IconArrowUpRight } from "@tabler/icons-react";
 
-// Temporary destinations until the new pages are built.
 const navigation = [
   {
     label: "About ELA",
-    href: "/#why-choose-heading",
+    href: "/about",
   },
   {
     label: "Services",
-    href: `${LIVE_SITE}/services`,
+    href: "/services",
   },
   {
     label: "Our Work",
-    href: `${LIVE_SITE}/gallery`,
+    href: "/gallery",
   },
   {
     label: "Areas We Cover",
-    href: "/#areas-heading",
+    href: "/areas-we-cover",
   },
   {
     label: "Contact",
-    href: `${LIVE_SITE}/contact`,
+    href: "/contact",
   },
 ];
 
-const quoteHref = `${LIVE_SITE}/contact`;
+const quoteHref = "/contact";
 
 function QuoteButton({ mobile = false }) {
   return (
@@ -70,11 +69,11 @@ export default function Header() {
   return (
     <header
       className="
-    sticky top-0 z-50
-    border-b border-slate-200
-    bg-white text-[#06152c]
-    shadow-[0_2px_12px_rgba(6,21,44,0.04)]
-  "
+        sticky top-0 z-50
+        border-b border-slate-200
+        bg-white text-[#06152c]
+        shadow-[0_2px_12px_rgba(6,21,44,0.04)]
+      "
     >
       <div
         className="
@@ -87,7 +86,7 @@ export default function Header() {
           xl:min-h-[86px]
         "
       >
-        {/* BRAND LOGO */}
+        {/* Brand logo */}
         <Link
           href="/"
           aria-label="ELA Pressure Washing homepage"
@@ -113,7 +112,7 @@ export default function Header() {
           />
         </Link>
 
-        {/* DESKTOP NAVIGATION */}
+        {/* Desktop navigation */}
         <nav
           aria-label="Primary navigation"
           className="hidden min-w-0 xl:block"
@@ -127,15 +126,15 @@ export default function Header() {
                   <Link
                     href={item.href}
                     className="
-            inline-flex min-h-11 items-center
-            rounded-sm text-sm font-semibold
-            whitespace-nowrap text-[#06152c]
-            transition-colors
-            hover:text-[#086bd4]
-            focus-visible:outline-2
-            focus-visible:outline-offset-4
-            focus-visible:outline-[#086bd4]
-          "
+                      inline-flex min-h-11 items-center
+                      rounded-sm text-sm font-semibold
+                      whitespace-nowrap text-[#06152c]
+                      transition-colors
+                      hover:text-[#086bd4]
+                      focus-visible:outline-2
+                      focus-visible:outline-offset-4
+                      focus-visible:outline-[#086bd4]
+                    "
                   >
                     {item.label}
                   </Link>
@@ -145,57 +144,24 @@ export default function Header() {
           </ul>
         </nav>
 
-        {/* HEADER ACTIONS */}
+        {/* Header actions */}
         <div className="flex shrink-0 items-center gap-3">
-          {/* Desktop and tablet CTA */}
+          {/* Desktop and tablet quote button */}
           <div className="hidden sm:block">
             <QuoteButton />
           </div>
 
-          {/* MOBILE AND TABLET NAVIGATION */}
-          <details className="group xl:hidden">
-            <summary
-              className="
-                flex h-11 w-11 cursor-pointer
-                list-none items-center justify-center
-                rounded-lg border border-slate-200
-                text-[#06152c]
-                transition-colors
-                hover:border-[#086bd4]/40
-                hover:bg-[#f3f7fb]
-                focus-visible:outline-2
-                focus-visible:outline-offset-4
-                focus-visible:outline-[#086bd4]
-                [&::-webkit-details-marker]:hidden
-              "
-            >
-              <span className="sr-only">Navigation menu</span>
-
-              <IconMenu2
-                size={23}
-                stroke={1.8}
-                className="group-open:hidden"
-                aria-hidden="true"
-              />
-
-              <IconX
-                size={23}
-                stroke={1.8}
-                className="hidden group-open:block"
-                aria-hidden="true"
-              />
-            </summary>
-
-            {/* EXPANDED MOBILE MENU */}
+          {/* Mobile and tablet navigation */}
+          <MobileMenuShell>
             <div
               className="
-    absolute inset-x-0 top-full
-    max-h-[calc(100dvh-72px)]
-    overflow-y-auto overscroll-contain
-    border-b border-slate-200
-    bg-white shadow-lg
-    sm:max-h-[calc(100dvh-80px)]
-  "
+                absolute inset-x-0 top-full
+                max-h-[calc(100dvh-72px)]
+                overflow-y-auto overscroll-contain
+                border-b border-slate-200
+                bg-white shadow-lg
+                sm:max-h-[calc(100dvh-80px)]
+              "
             >
               <nav
                 aria-label="Mobile navigation"
@@ -214,17 +180,17 @@ export default function Header() {
                         <Link
                           href={item.href}
                           className="
-            flex min-h-12 items-center
-            justify-between gap-3
-            rounded-sm py-3
-            text-base font-semibold
-            text-[#06152c]
-            transition-colors
-            hover:text-[#086bd4]
-            focus-visible:outline-2
-            focus-visible:outline-offset-2
-            focus-visible:outline-[#086bd4]
-          "
+                            flex min-h-12 items-center
+                            justify-between gap-3
+                            rounded-sm py-3
+                            text-base font-semibold
+                            text-[#06152c]
+                            transition-colors
+                            hover:text-[#086bd4]
+                            focus-visible:outline-2
+                            focus-visible:outline-offset-2
+                            focus-visible:outline-[#086bd4]
+                          "
                         >
                           <span>{item.label}</span>
 
@@ -241,17 +207,12 @@ export default function Header() {
                 </ul>
 
                 {/* Quote action on smaller phones */}
-                <div
-                  className="
-                    mt-5 border-t border-slate-200
-                    pt-5 sm:hidden
-                  "
-                >
+                <div className="mt-5 border-t border-slate-200 pt-5 sm:hidden">
                   <QuoteButton mobile />
                 </div>
               </nav>
             </div>
-          </details>
+          </MobileMenuShell>
         </div>
       </div>
     </header>
