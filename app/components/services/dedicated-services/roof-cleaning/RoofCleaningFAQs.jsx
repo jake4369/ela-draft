@@ -100,6 +100,7 @@ export default function RoofCleaningFAQ() {
         <div
           className="
             grid items-start gap-10
+            lg:items-center
             lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)]
             lg:gap-16 xl:gap-20
           "

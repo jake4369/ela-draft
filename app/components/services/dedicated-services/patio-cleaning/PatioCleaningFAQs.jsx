@@ -33,7 +33,7 @@ export default function PatioCleaningFAQ() {
       className="border-t border-[#dce6f2] bg-white py-16 sm:py-20 lg:py-24"
     >
       <div className="mx-auto max-w-7xl px-5 sm:px-8 lg:px-12">
-        <div className="grid items-start gap-10 lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16 xl:gap-20">
+        <div className="grid items-start gap-10 lg:items-center lg:grid-cols-[minmax(0,0.85fr)_minmax(0,1.15fr)] lg:gap-16 xl:gap-20">
           {/* Section introduction */}
           <div className="min-w-0">
             <div className="flex items-center gap-3">
