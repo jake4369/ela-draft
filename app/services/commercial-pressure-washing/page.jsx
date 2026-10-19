@@ -1,6 +1,7 @@
 import CommercialPressureWashingHero from "@/app/components/services/dedicated-services/commercial-pressure-washing/CommercialPressureWashingHero";
 import CommercialPressureWashingOverview from "@/app/components/services/dedicated-services/commercial-pressure-washing/CommercialPressureWashingOverview";
 import CommercialPressureWashingProcess from "@/app/components/services/dedicated-services/commercial-pressure-washing/CommercialPressureWashingProcess";
+import CommercialProjectShowcase from "@/app/components/services/dedicated-services/commercial-pressure-washing/CommercialProjectShowcase";
 
 const pageTitle = "Commercial Pressure Washing in Wolverhampton | ELA";
 
@@ -43,6 +44,7 @@ export default function CommercialPressureWashingPage() {
       <CommercialPressureWashingHero />
       <CommercialPressureWashingOverview />
       <CommercialPressureWashingProcess />
+      <CommercialProjectShowcase />
     </main>
   );
 }
