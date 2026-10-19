@@ -68,7 +68,7 @@ export default function EquipmentExpertise() {
             </figcaption>
           </figure>
 
-          <ol className="divide-y divide-slate-200 border-y border-slate-200">
+          <ol className="divide-y py-6 divide-slate-200 border-y border-slate-200">
             {capabilities.map((capability) => (
               <li
                 key={capability.number}
