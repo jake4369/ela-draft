@@ -167,7 +167,7 @@ export default function FinalCTA() {
           {/* QUOTATION BUTTON */}
           <div className="flex flex-col items-start lg:items-center">
             <Link
-              href="https://ela-draft.vercel.app/contact"
+              href="/contact"
               className="
                 group inline-flex min-h-14
                 items-center justify-center gap-3

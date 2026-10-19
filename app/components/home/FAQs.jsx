@@ -153,7 +153,7 @@ export default function FAQs() {
 
             {/* CONTACT LINK */}
             <Link
-              href="https://ela-draft.vercel.app/contact"
+              href="/contact"
               className="
                 group mt-8 inline-flex items-center
                 gap-2 rounded-sm

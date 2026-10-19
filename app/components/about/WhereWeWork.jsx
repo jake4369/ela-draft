@@ -64,7 +64,7 @@ export default function WhereWeWork() {
 
             {/* COVERAGE ENQUIRY LINK */}
             <Link
-              href="https://ela-draft.vercel.app/contact"
+              href="/contact"
               className="
                 group mt-8 inline-flex min-h-11
                 w-fit items-center gap-2

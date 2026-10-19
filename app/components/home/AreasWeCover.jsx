@@ -61,9 +61,9 @@ export default function AreasWeCover() {
               </p>
             </div>
 
-            {/* CONTACT LINK */}
+            {/* AREAS WE COVER LINK */}
             <Link
-              href="https://ela-draft.vercel.app/contact"
+              href="/areas-we-cover"
               className="
                 group mt-7 inline-flex items-center gap-2
                 rounded-sm text-sm font-semibold
@@ -76,7 +76,7 @@ export default function AreasWeCover() {
                 sm:text-base
               "
             >
-              Enquire About Your Area
+              Explore Areas We Cover
               <IconArrowUpRight
                 size={19}
                 stroke={1.8}
@@ -148,9 +148,24 @@ export default function AreasWeCover() {
               ))}
             </ul>
 
+            {/* COVERAGE ENQUIRY LINK */}
             <p className="mt-6 text-sm leading-6 text-slate-300">
-              Don't see your location? Contact us to confirm coverage in your
-              area.
+              Don&apos;t see your location?{" "}
+              <Link
+                href="/contact"
+                className="
+                  rounded-sm font-semibold text-[#93c5fd]
+                  underline underline-offset-4
+                  transition-colors
+                  hover:text-white
+                  focus-visible:outline-2
+                  focus-visible:outline-offset-4
+                  focus-visible:outline-[#93c5fd]
+                "
+              >
+                Contact us
+              </Link>{" "}
+              to confirm coverage in your area.
             </p>
           </div>
         </div>
