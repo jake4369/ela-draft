@@ -46,12 +46,12 @@ const serviceLinks = [
   {
     label: "Roof Cleaning",
     href: "/services/roof-cleaning",
-    ready: false,
+    ready: true,
   },
   {
     label: "Commercial Pressure Washing",
     href: "/services/commercial-pressure-washing",
-    ready: false,
+    ready: true,
   },
   {
     label: "Steam Cleaning",

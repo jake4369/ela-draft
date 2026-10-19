@@ -24,13 +24,13 @@ const services = [
     title: "Roof Cleaning",
     description: "Roof moss removal and surface care",
     href: "/services/roof-cleaning",
-    ready: false,
+    ready: true,
   },
   {
     title: "Commercial Pressure Washing",
     description: "Business exterior cleaning",
     href: "/services/commercial-pressure-washing",
-    ready: false,
+    ready: true,
   },
   {
     title: "Steam Cleaning",
