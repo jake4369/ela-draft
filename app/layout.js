@@ -16,6 +16,7 @@ export const metadata = {
 
   description:
     "Professional pressure washing, steam cleaning and specialist exterior care for homes and businesses across Wolverhampton and the West Midlands.",
+  metadataBase: new URL("https://elapressurewashing.co.uk"),
 };
 
 export default function RootLayout({ children }) {

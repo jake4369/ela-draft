@@ -130,7 +130,7 @@ function ServiceGroup({ group }) {
             </div>
 
             {/* Group service count */}
-            <p className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-slate-500">
+            <p className="shrink-0 text-xs font-semibold uppercase tracking-[0.14em] text-slate-600">
               {String(group.services.length).padStart(2, "0")} Services
             </p>
           </div>

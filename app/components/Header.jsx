@@ -8,7 +8,7 @@ import {
 
 import { IconArrowUpRight, IconMenu2, IconX } from "@tabler/icons-react";
 
-const LIVE_SITE = "https://www.elapressurewashing.co.uk";
+const LIVE_SITE = "https://ela-draft.vercel.app/";
 
 // Temporary destinations until the new pages are built.
 const navigation = [

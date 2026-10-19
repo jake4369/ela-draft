@@ -42,7 +42,7 @@ export default function AreasHero() {
           {/* PRIMARY ACTION */}
           <div className="mt-8 sm:mt-10">
             <Link
-              href="https://www.elapressurewashing.co.uk/contact"
+              href="https://ela-draft.vercel.app/contact"
               className="group inline-flex min-h-11 items-center gap-2 rounded-sm text-sm font-semibold text-[#086bd4] transition-colors duration-200 hover:text-[#054d99] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#086bd4]"
             >
               Enquire About Coverage

@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { IconArrowUpRight, IconChevronDown } from "@tabler/icons-react";
 
-const LIVE_SITE = "https://www.elapressurewashing.co.uk";
+const LIVE_SITE = "https://ela-draft.vercel.app/";
 
 const services = [
   {

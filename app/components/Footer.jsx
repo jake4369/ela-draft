@@ -9,7 +9,7 @@ import {
 
 // These service pages are live on the existing website.
 // Switch the URLs to local paths when you migrate those pages.
-const LIVE_SITE = "https://www.elapressurewashing.co.uk";
+const LIVE_SITE = "https://ela-draft.vercel.app/";
 
 const exploreLinks = [
   { label: "Home", href: "/" },
