@@ -7,7 +7,7 @@ const services = [
       "Refresh the appearance of your driveway with professional cleaning designed to tackle built-up dirt, moss and algae.",
     image: "/assets/images/services/driveway.webp",
     imageAlt: "Block-paved driveway outside residential brick properties",
-    href: "https://ela-draft.vercel.app/services/driveway-cleaning",
+    href: "/services/driveway-cleaning",
   },
   {
     title: "Patio Cleaning",
@@ -15,7 +15,7 @@ const services = [
       "Bring new life to patios and paved outdoor spaces with professional cleaning tailored to the surface and its condition.",
     image: "/assets/images/services/patio.webp",
     imageAlt: "Residential stone-paved garden patio with cleaning equipment",
-    href: "https://ela-draft.vercel.app/services/patio-cleaning",
+    href: "/services/patio-cleaning",
   },
   {
     title: "Roof Cleaning",
@@ -24,7 +24,7 @@ const services = [
     image: "/assets/images/services/roof-after.webp",
     imageAlt:
       "Aerial view of a tiled roof with contrasting lighter and darker areas",
-    href: "https://ela-draft.vercel.app/services/roof-cleaning",
+    href: "/services/roof-cleaning",
   },
   {
     title: "Commercial Pressure Washing",
@@ -33,7 +33,7 @@ const services = [
     image: "/assets/images/services/retail-park-alt.webp",
     imageAlt:
       "Commercial pedestrian paving beside a retail building during cleaning work",
-    href: "https://ela-draft.vercel.app/services/commercial-pressure-washing",
+    href: "/services/commercial-pressure-washing",
   },
   {
     title: "Steam Cleaning",
@@ -42,7 +42,7 @@ const services = [
     image: "/assets/images/services/council.webp",
     imageAlt:
       "Public pedestrian walkway with professional surface-cleaning equipment and safety barriers",
-    href: "https://ela-draft.vercel.app/services/steam-cleaning",
+    href: "/services/steam-cleaning",
   },
   {
     title: "Heritage Brickwork Cleaning",
@@ -51,7 +51,7 @@ const services = [
     image: "/assets/images/services/heritage-alt.webp",
     imageAlt:
       "Traditional red-brick building with historic architectural detailing",
-    href: "https://ela-draft.vercel.app/services/heritage-brickwork-cleaning",
+    href: "/services/heritage-brickwork-cleaning",
   },
 ];
 
