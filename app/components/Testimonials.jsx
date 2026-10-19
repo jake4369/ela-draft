@@ -13,14 +13,14 @@ const testimonials = [
     quote:
       "Can’t speak highly enough of Tom. Completely changed the look of our drive from terracotta red to slate grey. Nothing was too much trouble, and he bent over backwards to make sure we were happy with everything. We’ll be using Tom for all our cleaning of patio, etc. Lovely man would 100% recommend.",
     platform: "Yell",
-    url: "https://www.yell.com/reviews/user/AndrewG-1288",
+    url: "https://www.yell.com/biz/ela-pressure-washing-driveway-cleaning-and-sealing-wolverhampton-10441878/",
   },
   {
     name: "AnnM-665",
     quote:
       "Tom has done a fantastic job cleaning my rear patio and then cleaning and resealing/painting my drive. He’s a lovely young man and worked hard doing a great job. Highly recommend.",
     platform: "Yell",
-    url: "https://www.yell.com/reviews/user/AnnM-665",
+    url: "https://www.yell.com/biz/ela-pressure-washing-driveway-cleaning-and-sealing-wolverhampton-10441878/",
   },
 ];
 
@@ -37,7 +37,11 @@ function ReviewSourceLink({ review, featured = false }) {
           : "text-[#006bd6] hover:text-[#06152c]"
       }`}
     >
-      <span>View review on {review.platform}</span>
+      <span>
+        {review.platform === "Yell"
+          ? "Read reviews on Yell"
+          : `View review on ${review.platform}`}
+      </span>
       <IconExternalLink size={15} stroke={1.8} aria-hidden="true" />
     </a>
   );
