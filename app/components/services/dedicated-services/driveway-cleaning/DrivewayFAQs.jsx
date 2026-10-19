@@ -56,20 +56,22 @@ const faqs = [
   },
 ];
 
-function FAQItem({ question, answer }) {
+function FAQItem({ question, answer, index }) {
   return (
     <details className="group border-b border-[#dce6f2] last:border-b-0">
       <summary
-        className="
+        className={`
           flex cursor-pointer list-none items-start justify-between
           gap-4 rounded-lg px-5 py-5
           text-left transition-colors duration-150
-          hover:bg-[#edf5fd]
+          hover:bg-[#eaf3ff]
+          group-open:bg-[#eaf3ff]
           focus-visible:outline-2 focus-visible:outline-offset-[-3px]
           focus-visible:outline-[#086bd4]
           sm:gap-6 sm:px-7 sm:py-6
           [&::-webkit-details-marker]:hidden
-        "
+          ${index === 0 ? "bg-[#eaf3ff]" : "bg-[#f7faff]"}
+        `}
       >
         <span className="text-pretty text-base font-bold leading-7 tracking-tight text-[#06152c] sm:text-lg">
           {question}
@@ -148,12 +150,13 @@ export default function DrivewayCleaningFAQ() {
           </div>
 
           {/* Native HTML FAQ accordion */}
-          <div className="min-w-0 overflow-hidden rounded-xl border border-[#dce6f2] bg-[#f6faff]">
-            {faqs.map((faq) => (
+          <div className="min-w-0 overflow-hidden rounded-xl border border-[#dce6f2] bg-[#f7faff]">
+            {faqs.map((faq, index) => (
               <FAQItem
                 key={faq.question}
                 question={faq.question}
                 answer={faq.answer}
+                index={index}
               />
             ))}
           </div>
