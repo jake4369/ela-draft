@@ -116,7 +116,7 @@ export default function RoofCleaningOverview() {
           </div>
 
           {/* Right: Three key considerations */}
-          <ol className="grid min-w-0 gap-4 sm:gap-5">
+          <ol className="grid min-w-0 gap-4 sm:gap-5 lg:self-center">
             {considerations.map((item) => {
               const Icon = item.icon;
 
