@@ -56,7 +56,7 @@ const serviceLinks = [
   {
     label: "Steam Cleaning",
     href: "/services/steam-cleaning",
-    ready: false,
+    ready: true,
   },
   {
     label: "Heritage Brickwork Cleaning",

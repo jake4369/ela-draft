@@ -36,7 +36,7 @@ const services = [
     title: "Steam Cleaning",
     description: "Specialist heat-assisted cleaning",
     href: "/services/steam-cleaning",
-    ready: false,
+    ready: true,
   },
   {
     title: "Heritage Brickwork Cleaning",
