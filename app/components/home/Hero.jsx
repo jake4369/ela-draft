@@ -10,7 +10,6 @@ export default function Hero() {
       className="relative isolate flex min-h-[600px] items-center overflow-hidden bg-[#06152c] text-white lg:min-h-[680px]"
     >
       {/* Background photograph */}
-
       <Image
         src="/assets/images/hero/hero.webp"
         alt="ELA operative pressure washing a commercial roller shutter"
@@ -21,23 +20,23 @@ export default function Hero() {
         className="object-cover object-[65%_center] sm:object-[60%_center] lg:object-center"
       />
 
-      {/* Temporary overlay — to refine separately */}
+      {/* Background overlay */}
       <div
         aria-hidden="true"
         className="
-  absolute inset-0
-  bg-[#06152c]/75
-  sm:bg-linear-to-r
-  sm:from-[#06152c]/90
-  sm:via-[#06152c]/75
-  sm:to-[#06152c]/40
-  lg:from-[#06152c]/95
-  lg:via-[#06152c]/65
-  lg:to-[#06152c]/10
-"
+          absolute inset-0
+          bg-[#06152c]/75
+          sm:bg-linear-to-r
+          sm:from-[#06152c]/90
+          sm:via-[#06152c]/75
+          sm:to-[#06152c]/40
+          lg:from-[#06152c]/95
+          lg:via-[#06152c]/65
+          lg:to-[#06152c]/10
+        "
       />
 
-      {/* Hero content — provisional for layout testing */}
+      {/* Hero content */}
       <div className="relative z-10 mx-auto w-full max-w-7xl px-5 py-24 sm:px-8 lg:px-12">
         <div className="max-w-2xl">
           <p className="mb-5 text-xs font-semibold uppercase tracking-[0.18em] text-[#94caff] sm:text-sm">
@@ -62,17 +61,17 @@ export default function Hero() {
           <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
             {/* Primary CTA */}
             <Link
-              href="https://elapressurewashing.co.uk/contact"
+              href="/contact"
               className="
-      inline-flex min-h-12 items-center justify-center gap-3
-      rounded-lg bg-[#086bd4] px-7 py-3
-      text-sm font-semibold text-white
-      transition-colors duration-200
-      hover:bg-[#0068dc]
-      focus-visible:outline-2
-      focus-visible:outline-offset-4
-      focus-visible:outline-white
-    "
+                inline-flex min-h-12 items-center justify-center gap-3
+                rounded-lg bg-[#086bd4] px-7 py-3
+                text-sm font-semibold text-white
+                transition-colors duration-200
+                hover:bg-[#0068dc]
+                focus-visible:outline-2
+                focus-visible:outline-offset-4
+                focus-visible:outline-white
+              "
             >
               Request a Free Quote
               <IconMessageCircle
@@ -85,18 +84,18 @@ export default function Hero() {
 
             {/* Secondary CTA */}
             <Link
-              href="https://elapressurewashing.co.uk/services"
+              href="/services"
               className="
-      inline-flex min-h-12 items-center justify-center gap-3
-      rounded-lg border border-white/60
-      bg-[#06152c]/30 px-7 py-3
-      text-sm font-semibold text-white
-      transition-colors duration-200
-      hover:border-white hover:bg-white/15
-      focus-visible:outline-2
-      focus-visible:outline-offset-4
-      focus-visible:outline-white
-    "
+                inline-flex min-h-12 items-center justify-center gap-3
+                rounded-lg border border-white/60
+                bg-[#06152c]/30 px-7 py-3
+                text-sm font-semibold text-white
+                transition-colors duration-200
+                hover:border-white hover:bg-white/15
+                focus-visible:outline-2
+                focus-visible:outline-offset-4
+                focus-visible:outline-white
+              "
             >
               Explore Our Services
               <IconArrowRight
