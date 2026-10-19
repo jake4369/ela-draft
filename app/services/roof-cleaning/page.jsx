@@ -3,6 +3,7 @@ import RoofCleaningOverview from "@/app/components/services/dedicated-services/r
 import RoofCleaningProcess from "@/app/components/services/dedicated-services/roof-cleaning/RoofCleaningProcess";
 import RoofProjectShowcase from "@/app/components/services/dedicated-services/roof-cleaning/RoofProjectShowcase";
 import RoofCleaningFAQ from "@/app/components/services/dedicated-services/roof-cleaning/RoofCleaningFAQs";
+import RoofClosingCTA from "@/app/components/services/dedicated-services/roof-cleaning/RoofClosingCTA";
 
 const pageTitle = "Roof Cleaning & Moss Removal in Wolverhampton | ELA";
 
@@ -47,6 +48,7 @@ export default function RoofCleaningPage() {
       <RoofCleaningProcess />
       <RoofProjectShowcase />
       <RoofCleaningFAQ />
+      <RoofClosingCTA />
     </main>
   );
 }
