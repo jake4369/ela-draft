@@ -10,14 +10,19 @@ const pageTitle = "Commercial Pressure Washing in Wolverhampton | ELA";
 const pageDescription =
   "Commercial pressure washing and exterior cleaning in Wolverhampton and the West Midlands. Forecourts, paving, entrances and more. Request a quote.";
 
+const socialImage = "/assets/images/hero/hero.webp";
+
 export const metadata = {
   title: {
     absolute: pageTitle,
   },
+
   description: pageDescription,
+
   alternates: {
     canonical: "/services/commercial-pressure-washing",
   },
+
   openGraph: {
     title: pageTitle,
     description: pageDescription,
@@ -27,16 +32,17 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/assets/opengraph.png",
-        alt: "ELA Pressure Washing commercial exterior cleaning",
+        url: socialImage,
+        alt: "ELA Pressure Washing operative using professional cleaning equipment on a commercial building exterior",
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
     title: pageTitle,
     description: pageDescription,
-    images: ["/assets/opengraph.png"],
+    images: [socialImage],
   },
 };
 
