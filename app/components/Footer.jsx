@@ -61,7 +61,7 @@ const serviceLinks = [
   {
     label: "Heritage Brickwork Cleaning",
     href: "/services/heritage-brickwork-cleaning",
-    ready: false,
+    ready: true,
   },
 ];
 

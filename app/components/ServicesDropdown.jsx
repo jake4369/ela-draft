@@ -42,7 +42,7 @@ const services = [
     title: "Heritage Brickwork Cleaning",
     description: "Care for traditional masonry",
     href: "/services/heritage-brickwork-cleaning",
-    ready: false,
+    ready: true,
   },
 ];
 
