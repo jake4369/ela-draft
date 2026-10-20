@@ -10,14 +10,22 @@ const pageTitle = "Patio Cleaning in Wolverhampton | ELA Pressure Washing";
 const pageDescription =
   "Professional patio cleaning in Wolverhampton and the West Midlands. Remove dirt, moss and algae from suitable paved surfaces. Contact ELA for a quote.";
 
+const socialImage = "/assets/images/services/patio-hero.webp";
+
+const socialImageAlt =
+  "Residential garden patio with multicoloured paving slabs, outdoor furniture and cleaning equipment";
+
 export const metadata = {
   title: {
     absolute: pageTitle,
   },
+
   description: pageDescription,
+
   alternates: {
     canonical: "/services/patio-cleaning",
   },
+
   openGraph: {
     title: pageTitle,
     description: pageDescription,
@@ -27,16 +35,22 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/assets/opengraph.png",
-        alt: "ELA Pressure Washing exterior cleaning services",
+        url: socialImage,
+        alt: socialImageAlt,
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
     title: pageTitle,
     description: pageDescription,
-    images: ["/assets/opengraph.png"],
+    images: [
+      {
+        url: socialImage,
+        alt: socialImageAlt,
+      },
+    ],
   },
 };
 

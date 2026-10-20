@@ -10,14 +10,23 @@ const pageTitle = "Heritage Brickwork Cleaning in Wolverhampton | ELA";
 const pageDescription =
   "Specialist heritage brickwork cleaning in Wolverhampton and the West Midlands. Sensitive cleaning approaches for older masonry and historic brickwork. Request a quote.";
 
+const socialImage =
+  "/assets/images/services/heritage-brickwork-building-exterior.webp";
+
+const socialImageAlt =
+  "Wide street-level view of a large traditional red-brick building with stone window surrounds, architectural detailing and iron railings.";
+
 export const metadata = {
   title: {
     absolute: pageTitle,
   },
+
   description: pageDescription,
+
   alternates: {
     canonical: "/services/heritage-brickwork-cleaning",
   },
+
   openGraph: {
     title: pageTitle,
     description: pageDescription,
@@ -27,16 +36,22 @@ export const metadata = {
     type: "website",
     images: [
       {
-        url: "/assets/opengraph.png",
-        alt: "ELA Pressure Washing heritage brickwork cleaning",
+        url: socialImage,
+        alt: socialImageAlt,
       },
     ],
   },
+
   twitter: {
     card: "summary_large_image",
     title: pageTitle,
     description: pageDescription,
-    images: ["/assets/opengraph.png"],
+    images: [
+      {
+        url: socialImage,
+        alt: socialImageAlt,
+      },
+    ],
   },
 };
 

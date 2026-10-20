@@ -12,6 +12,9 @@ const pageDescription =
 
 const socialImage = "/assets/images/hero/hero.webp";
 
+const socialImageAlt =
+  "ELA Pressure Washing operative using professional cleaning equipment on a commercial building exterior";
+
 export const metadata = {
   title: {
     absolute: pageTitle,
@@ -33,7 +36,7 @@ export const metadata = {
     images: [
       {
         url: socialImage,
-        alt: "ELA Pressure Washing operative using professional cleaning equipment on a commercial building exterior",
+        alt: socialImageAlt,
       },
     ],
   },
@@ -42,7 +45,12 @@ export const metadata = {
     card: "summary_large_image",
     title: pageTitle,
     description: pageDescription,
-    images: [socialImage],
+    images: [
+      {
+        url: socialImage,
+        alt: socialImageAlt,
+      },
+    ],
   },
 };
 
