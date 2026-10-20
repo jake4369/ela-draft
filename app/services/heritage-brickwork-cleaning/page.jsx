@@ -1,6 +1,7 @@
 import HeritageBrickworkHero from "@/app/components/services/dedicated-services/heritage-brickwork-cleaning/HeritageBrickworkHero";
 import HeritageBrickworkOverview from "@/app/components/services/dedicated-services/heritage-brickwork-cleaning/HeritageBrickworkOverview";
 import HeritageBrickworkProcess from "@/app/components/services/dedicated-services/heritage-brickwork-cleaning/HeritageBrickworkProcess";
+import HeritageBrickworkShowcase from "@/app/components/services/dedicated-services/heritage-brickwork-cleaning/HeritageBrickworkShowcase";
 
 const pageTitle = "Heritage Brickwork Cleaning in Wolverhampton | ELA";
 
@@ -43,6 +44,7 @@ export default function HeritageBrickworkCleaningPage() {
       <HeritageBrickworkHero />
       <HeritageBrickworkOverview />
       <HeritageBrickworkProcess />
+      <HeritageBrickworkShowcase />
     </main>
   );
 }
