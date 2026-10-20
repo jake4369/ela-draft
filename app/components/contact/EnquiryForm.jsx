@@ -9,6 +9,8 @@ const SubmissionStateContext = createContext(false);
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
+const REQUEST_TIMEOUT_MS = 15000;
+
 const fieldLabels = {
   name: "Full name",
   email: "Email address",
@@ -43,30 +45,6 @@ function getEnquiryValues(form) {
   };
 }
 
-/**
- * Development-only simulation.
- *
- * This function does not make a network request
- * and does not send an email.
- *
- * It will be replaced by the real submission
- * operation during the backend integration.
- */
-async function simulateSubmission(outcome) {
-  await new Promise((resolve) => {
-    setTimeout(resolve, 1200);
-  });
-
-  if (outcome === "failure") {
-    throw new Error("Simulated submission failure.");
-  }
-
-  return {
-    success: true,
-    simulated: true,
-  };
-}
-
 export function EnquirySubmitButton({ children }) {
   const [isReady, setIsReady] = useState(false);
   const isSubmitting = useContext(SubmissionStateContext);
@@ -75,10 +53,12 @@ export function EnquirySubmitButton({ children }) {
     setIsReady(true);
   }, []);
 
+  const isDisabled = !isReady || isSubmitting || !isDevelopment;
+
   return (
     <button
       type="submit"
-      disabled={!isReady || isSubmitting}
+      disabled={isDisabled}
       className="
         inline-flex min-h-12 w-full items-center
         justify-center gap-3 rounded-lg
@@ -104,7 +84,7 @@ export function EnquirySubmitButton({ children }) {
               border-t-white
             "
           />
-          Processing...
+          Checking...
         </>
       ) : (
         children
@@ -124,10 +104,6 @@ export default function EnquiryForm({ children }) {
   const [result, setResult] = useState(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [testOutcome, setTestOutcome] = useState("success");
-
-  // Used to remount and reset all form fields after success.
-  const [resetKey, setResetKey] = useState(0);
 
   const [focusRequest, setFocusRequest] = useState(0);
   const [feedbackRequest, setFeedbackRequest] = useState(0);
@@ -135,14 +111,14 @@ export default function EnquiryForm({ children }) {
   const errorEntries = Object.entries(errors);
   const hasErrors = errorEntries.length > 0;
 
-  // Focus the error summary after it is rendered.
+  // Focus the error summary after React renders it.
   useEffect(() => {
     if (focusRequest > 0) {
       errorSummaryRef.current?.focus();
     }
   }, [focusRequest]);
 
-  // Focus submission feedback after an outcome.
+  // Focus the result after the request completes.
   useEffect(() => {
     if (feedbackRequest > 0) {
       feedbackRef.current?.focus();
@@ -178,7 +154,6 @@ export default function EnquiryForm({ children }) {
       setResult(null);
     }
 
-    // Keep existing errors in sync after a submission attempt.
     if (attempts > 0) {
       setErrors(validateEnquiry(getEnquiryValues(form)));
     }
@@ -187,33 +162,32 @@ export default function EnquiryForm({ children }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    // Guard against duplicate submissions.
+    // Prevent duplicate submissions.
     if (pendingRef.current) return;
 
     const form = event.currentTarget;
     const values = getEnquiryValues(form);
 
+    // Always validate locally first.
     const validationErrors = validateEnquiry(values);
-    const invalidFields = Object.keys(validationErrors);
 
     setAttempts((previous) => previous + 1);
     setErrors(validationErrors);
     setResult(null);
 
-    if (invalidFields.length > 0) {
+    if (Object.keys(validationErrors).length > 0) {
       setFocusRequest((previous) => previous + 1);
       return;
     }
 
-    // Outside local development, keep the form in
-    // explicit validation-only mode.
+    // Explicitly prevent production submission while
+    // the backend and email integration are unfinished.
     if (!isDevelopment) {
       setResult({
         type: "information",
         message:
-          "Your details passed validation, but this enquiry form " +
-          "is not yet connected to email. No enquiry has been sent. " +
-          "Please contact ELA by telephone in the meantime.",
+          "Online enquiries are not yet available. " +
+          "Please call ELA Pressure Washing on 07852 435168.",
       });
 
       setFeedbackRequest((previous) => previous + 1);
@@ -223,41 +197,103 @@ export default function EnquiryForm({ children }) {
     pendingRef.current = true;
     setIsSubmitting(true);
 
-    try {
-      const response = await simulateSubmission(testOutcome);
+    const controller = new AbortController();
 
-      if (!response.success || !response.simulated) {
-        throw new Error("Unexpected simulation response.");
+    const timeoutId = window.setTimeout(() => {
+      controller.abort();
+    }, REQUEST_TIMEOUT_MS);
+
+    try {
+      // Real local API request.
+      // The endpoint currently validates data only.
+      const response = await fetch("/api/enquiries", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+        cache: "no-store",
+        signal: controller.signal,
+      });
+
+      const data = await response.json().catch(() => null);
+
+      // Server-side validation errors.
+      if (response.status === 422 && data?.code === "VALIDATION_FAILED") {
+        const serverErrors = {};
+
+        if (
+          data.errors &&
+          typeof data.errors === "object" &&
+          !Array.isArray(data.errors)
+        ) {
+          for (const [fieldName, message] of Object.entries(data.errors)) {
+            if (
+              Object.hasOwn(fieldLabels, fieldName) &&
+              typeof message === "string"
+            ) {
+              serverErrors[fieldName] = message;
+            }
+          }
+        }
+
+        if (Object.keys(serverErrors).length > 0) {
+          setErrors(serverErrors);
+          setFocusRequest((previous) => previous + 1);
+          return;
+        }
+
+        throw new Error("Unexpected validation response.");
       }
 
-      // Only reset after the simulated successful result.
-      // The real integration will use a confirmed API response.
-      setResetKey((previous) => previous + 1);
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}`);
+      }
 
-      // Clear form-level validation state.
-      setAttempts(0);
+      // Accept only the expected validation-only
+      // response from our development endpoint.
+      const isExpectedTestResult =
+        data?.success === true &&
+        data?.validated === true &&
+        data?.simulated === true &&
+        data?.emailSent === false;
+
+      if (!isExpectedTestResult) {
+        throw new Error("Unexpected server response.");
+      }
+
+      // Validation succeeded, but no email was sent.
+      // Deliberately preserve every field value.
       setErrors({});
 
       setResult({
-        type: "success",
+        type: "information",
         message:
-          "Simulation completed successfully. No email has been sent. " +
-          "All form fields have been reset for testing.",
+          "Server-side validation passed successfully. " +
+          "This is a development test only. " +
+          "No enquiry has been sent and your details " +
+          "have been retained in the form.",
       });
 
       setFeedbackRequest((previous) => previous + 1);
-    } catch {
-      // Preserve all entered values on failure.
+    } catch (error) {
+      const timedOut = error?.name === "AbortError";
+
       setResult({
         type: "error",
-        message:
-          "The simulated submission failed. " +
-          "Your enquiry details have been preserved. " +
-          "No email has been sent.",
+        message: timedOut
+          ? "The validation request timed out. " +
+            "Your details have been preserved. " +
+            "No email has been sent."
+          : "The validation request could not be completed. " +
+            "Your details have been preserved. " +
+            "No email has been sent.",
       });
 
       setFeedbackRequest((previous) => previous + 1);
     } finally {
+      window.clearTimeout(timeoutId);
+
       pendingRef.current = false;
       setIsSubmitting(false);
     }
@@ -271,6 +307,7 @@ export default function EnquiryForm({ children }) {
           method="post"
           action="/contact"
           aria-labelledby="contact-enquiry-heading"
+          aria-busy={isSubmitting}
           noValidate
           onSubmit={handleSubmit}
           onChangeCapture={handleFormChange}
@@ -334,7 +371,7 @@ export default function EnquiryForm({ children }) {
             </div>
           )}
 
-          {/* Submission feedback */}
+          {/* Server response feedback */}
           {result && (
             <div
               ref={feedbackRef}
@@ -350,49 +387,41 @@ export default function EnquiryForm({ children }) {
             </div>
           )}
 
-          {/* Existing form fields and controls.
-              Changing resetKey remounts the complete subtree,
-              resetting controlled and uncontrolled fields. */}
-          <div key={resetKey} className="space-y-6">
+          {/* Existing form fields */}
+          {/* Disable all fields during the API request. */}
+          <fieldset
+            disabled={isSubmitting}
+            aria-label="Enquiry details"
+            className="m-0 min-w-0 space-y-6 border-0 p-0"
+          >
             {children}
-          </div>
+          </fieldset>
 
-          {/* Local development testing controls */}
-          {isDevelopment && (
-            <div className="rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4">
-              <label
-                htmlFor="enquiry-test-outcome"
-                className="block text-sm font-semibold text-[#06152c]"
-              >
-                Development test outcome
-              </label>
+          {/* Accessible pending-state announcement */}
+          {isSubmitting && (
+            <p role="status" className="text-sm leading-6 text-slate-600">
+              Checking your enquiry details...
+            </p>
+          )}
 
-              <select
-                id="enquiry-test-outcome"
-                value={testOutcome}
-                onChange={(event) => {
-                  setTestOutcome(event.target.value);
-                }}
-                disabled={isSubmitting}
+          {/* Production fallback */}
+          {!isDevelopment && (
+            <p className="text-sm leading-6 text-slate-600">
+              Online enquiries are not yet available. Please call{" "}
+              <a
+                href="tel:+447852435168"
                 className="
-                  mt-2 min-h-11 w-full rounded-lg
-                  border border-slate-300 bg-white
-                  px-3 py-2 text-sm text-[#06152c]
+                  font-semibold text-[#0757ad]
+                  underline underline-offset-4
                   focus-visible:outline-2
                   focus-visible:outline-offset-2
                   focus-visible:outline-[#086bd4]
-                  sm:max-w-xs
                 "
               >
-                <option value="success">Simulate successful submission</option>
-
-                <option value="failure">Simulate failed submission</option>
-              </select>
-
-              <p className="mt-2 text-xs leading-5 text-slate-600">
-                Local testing only. No email or network request will be made.
-              </p>
-            </div>
+                07852 435168
+              </a>{" "}
+              to discuss your project.
+            </p>
           )}
 
           {/* JavaScript-disabled fallback */}
