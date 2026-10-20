@@ -4,6 +4,15 @@ import { useEffect, useRef, useState } from "react";
 
 import { useValidationAttempts } from "./EnquiryForm";
 
+import {
+  ENQUIRY_LIMITS,
+  normalizePostcode,
+  validateName,
+  validateEmail,
+  validatePostcode,
+  validateMessage,
+} from "./enquiryValidation";
+
 function useFieldValidation(validate) {
   const submissionAttempts = useValidationAttempts();
 
@@ -12,21 +21,20 @@ function useFieldValidation(validate) {
   const [touched, setTouched] = useState(false);
   const [error, setError] = useState("");
 
-  // Revalidate when the user attempts submission.
   useEffect(() => {
     if (submissionAttempts > 0 && inputRef.current) {
-      setError(validate(inputRef.current));
+      setError(validate(inputRef.current.value));
     }
   }, [submissionAttempts, validate]);
 
   function handleBlur(event) {
     setTouched(true);
-    setError(validate(event.currentTarget));
+    setError(validate(event.currentTarget.value));
   }
 
   function handleChange(event) {
     if (touched || submissionAttempts > 0) {
-      setError(validate(event.currentTarget));
+      setError(validate(event.currentTarget.value));
     }
   }
 
@@ -52,16 +60,7 @@ function getErrorClasses(error) {
   return error ? "!border-red-600 focus-visible:!outline-red-600" : "";
 }
 
-// Name
-// Name validation
-
-function validateName(input) {
-  if (!input.value.trim()) {
-    return "Please enter your full name.";
-  }
-
-  return "";
-}
+// Full name
 
 export function NameField({ inputClasses, labelClasses }) {
   const { inputRef, error, handleBlur, handleChange } =
@@ -81,7 +80,7 @@ export function NameField({ inputClasses, labelClasses }) {
         autoComplete="name"
         placeholder="Your full name"
         required
-        maxLength={100}
+        maxLength={ENQUIRY_LIMITS.name}
         onBlur={handleBlur}
         onChange={handleChange}
         aria-invalid={error ? "true" : undefined}
@@ -96,18 +95,6 @@ export function NameField({ inputClasses, labelClasses }) {
 
 // Email address
 
-function validateEmail(input) {
-  if (!input.value.trim()) {
-    return "Please enter your email address.";
-  }
-
-  if (input.validity.typeMismatch) {
-    return "Please enter a valid email address.";
-  }
-
-  return "";
-}
-
 export function EmailField({ inputClasses, labelClasses }) {
   const { inputRef, error, handleBlur, handleChange } =
     useFieldValidation(validateEmail);
@@ -119,14 +106,14 @@ export function EmailField({ inputClasses, labelClasses }) {
       </label>
 
       <input
+        ref={inputRef}
         id="enquiry-email"
         name="email"
         type="email"
-        ref={inputRef}
         autoComplete="email"
         placeholder="you@example.com"
         required
-        maxLength={254}
+        maxLength={ENQUIRY_LIMITS.email}
         onBlur={handleBlur}
         onChange={handleChange}
         aria-invalid={error ? "true" : undefined}
@@ -141,21 +128,19 @@ export function EmailField({ inputClasses, labelClasses }) {
 
 // UK property postcode
 
-function validatePostcode(input) {
-  if (!input.value.trim()) {
-    return "Please enter the property's postcode.";
-  }
-
-  if (input.validity.patternMismatch) {
-    return "Please enter a valid UK postcode, such as WV1 1AA.";
-  }
-
-  return "";
-}
-
 export function PostcodeField({ inputClasses, labelClasses }) {
   const { inputRef, error, handleBlur, handleChange } =
     useFieldValidation(validatePostcode);
+
+  function handlePostcodeBlur(event) {
+    const input = event.currentTarget;
+
+    if (!validatePostcode(input.value)) {
+      input.value = normalizePostcode(input.value);
+    }
+
+    handleBlur(event);
+  }
 
   return (
     <div>
@@ -173,9 +158,9 @@ export function PostcodeField({ inputClasses, labelClasses }) {
         spellCheck={false}
         placeholder="e.g. WV1 1AA"
         required
-        pattern="[ ]*(?:[A-Za-z]{1,2}[0-9][A-Za-z0-9]?[ ]*[0-9][A-Za-z]{2}|[Gg][Ii][Rr][ ]*0[Aa][Aa])[ ]*"
+        maxLength={ENQUIRY_LIMITS.postcode}
         title="Enter a valid UK postcode, for example WV1 1AA."
-        onBlur={handleBlur}
+        onBlur={handlePostcodeBlur}
         onChange={handleChange}
         aria-invalid={error ? "true" : undefined}
         aria-describedby={
@@ -196,20 +181,6 @@ export function PostcodeField({ inputClasses, labelClasses }) {
 
 // Project details
 
-function validateMessage(input) {
-  const message = input.value.trim();
-
-  if (!message) {
-    return "Please tell us about the work you need.";
-  }
-
-  if (message.length < 10) {
-    return "Please enter at least 10 characters describing the work.";
-  }
-
-  return "";
-}
-
 export function MessageField({ inputClasses, labelClasses }) {
   const { inputRef, error, handleBlur, handleChange } =
     useFieldValidation(validateMessage);
@@ -228,7 +199,7 @@ export function MessageField({ inputClasses, labelClasses }) {
         rows={6}
         required
         minLength={10}
-        maxLength={3000}
+        maxLength={ENQUIRY_LIMITS.message}
         placeholder="Tell us what you'd like cleaned, the approximate size of the area, and anything else you think would be helpful..."
         onBlur={handleBlur}
         onChange={handleChange}

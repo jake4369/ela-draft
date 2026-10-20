@@ -311,22 +311,43 @@ export default function Footer() {
         {/* FOOTER BOTTOM BAR */}
         <div
           className="
-            flex flex-col gap-2
-            border-t border-[#cedae7]
-            py-6
-            sm:flex-row sm:items-center
-            sm:justify-between sm:gap-6
-          "
+    flex flex-col gap-2
+    border-t border-[#cedae7]
+    py-6
+    sm:flex-row sm:items-center
+    sm:justify-between sm:gap-6
+  "
         >
+          {/* Copyright */}
           <p className="text-xs leading-6 text-slate-600">
             © {new Date().getFullYear()} ELA Pressure Washing. All rights
             reserved.
           </p>
 
-          <p className="text-xs leading-6 text-slate-600">
-            Website by{" "}
-            <span className="font-semibold text-[#06152c]">DevXDesign</span>
-          </p>
+          {/* Legal link and website attribution */}
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link
+              href="/privacy"
+              className="
+        rounded-sm text-xs leading-6
+        text-slate-600
+        transition-colors
+        hover:text-[#086bd4]
+        hover:underline
+        underline-offset-4
+        focus-visible:outline-2
+        focus-visible:outline-offset-4
+        focus-visible:outline-[#086bd4]
+      "
+            >
+              Privacy Policy
+            </Link>
+
+            <p className="text-xs leading-6 text-slate-600">
+              Website by{" "}
+              <span className="font-semibold text-[#06152c]">DevXDesign</span>
+            </p>
+          </div>
         </div>
       </div>
     </footer>

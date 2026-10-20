@@ -4,6 +4,8 @@ import { createContext, useContext, useState } from "react";
 
 import { useValidationAttempts } from "./EnquiryForm";
 
+import { ENQUIRY_LIMITS, validatePhone } from "./enquiryValidation";
+
 const ContactPreferenceContext = createContext(null);
 
 const contactOptions = [
@@ -38,6 +40,7 @@ function useContactPreference() {
 
 export function PhoneField({ inputClasses, labelClasses }) {
   const { contactMethod } = useContactPreference();
+
   const [phone, setPhone] = useState("");
   const [touched, setTouched] = useState(false);
 
@@ -45,39 +48,15 @@ export function PhoneField({ inputClasses, labelClasses }) {
 
   const phoneRequired = contactMethod !== "email";
 
-  const phonePattern =
-    contactMethod === "text"
-      ? String.raw`(?:0|\+44|0044)[\s.\-]*7(?:[\s.\-]*[0-9]){9}`
-      : String.raw`(?:0|\+44|0044)(?:[\s.\-]*[0-9]){9,10}`;
-
   const phoneHint =
     contactMethod === "text"
       ? "Enter a UK mobile number, for example 07700 900123."
       : "Enter a UK telephone number, for example 01902 123456.";
 
-  // Use the same pattern as the HTML input.
-  const phoneRegex = new RegExp(`^(?:${phonePattern})$`);
-
-  const isEmpty = phone.trim().length === 0;
-  const matchesPattern = phoneRegex.test(phone);
-
-  // Show errors only after the field has been visited.
-  let error = "";
-
-  if (touched || submissionAttempts > 0) {
-    if (isEmpty) {
-      if (phoneRequired) {
-        error = "Please enter a phone number for your selected contact method.";
-      } else if (phone.length > 0) {
-        error = "Please enter a valid phone number or leave this field empty.";
-      }
-    } else if (!matchesPattern) {
-      error =
-        contactMethod === "text"
-          ? "Please enter a valid UK mobile number for text messages."
-          : "Please enter a valid UK telephone number.";
-    }
-  }
+  const error =
+    touched || submissionAttempts > 0
+      ? validatePhone(phone, contactMethod)
+      : "";
 
   const showError = Boolean(error);
 
@@ -100,13 +79,10 @@ export function PhoneField({ inputClasses, labelClasses }) {
         inputMode="tel"
         placeholder="Your contact number"
         required={phoneRequired}
-        pattern={phonePattern}
         title={phoneHint}
-        maxLength={25}
+        maxLength={ENQUIRY_LIMITS.phone}
         value={phone}
-        onChange={(event) => {
-          setPhone(event.target.value);
-        }}
+        onChange={(event) => setPhone(event.target.value)}
         onBlur={() => setTouched(true)}
         aria-invalid={showError ? "true" : undefined}
         aria-describedby={
@@ -115,7 +91,7 @@ export function PhoneField({ inputClasses, labelClasses }) {
             : "enquiry-phone-help"
         }
         className={`${inputClasses} ${
-          showError ? "1border-red-600! focus-visible:outline-red-600!" : ""
+          showError ? "!border-red-600 focus-visible:!outline-red-600" : ""
         }`}
       />
 

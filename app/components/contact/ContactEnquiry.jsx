@@ -1,3 +1,5 @@
+import Link from "next/link";
+
 import {
   ContactPreferencesProvider,
   PhoneField,
@@ -11,7 +13,7 @@ import {
   MessageField,
 } from "./RequiredFields";
 
-import EnquiryForm from "./EnquiryForm";
+import EnquiryForm, { EnquirySubmitButton } from "./EnquiryForm";
 
 import {
   IconArrowUpRight,
@@ -103,19 +105,25 @@ export default function ContactEnquiry() {
 
                 {/* Privacy information */}
                 <p className="border-t border-slate-200 pt-5 text-sm leading-6 text-slate-600">
-                  Your enquiry details will be used to respond to your request.
-                  Full privacy information will be linked here before launch.
+                  We&apos;ll use the information you provide to respond to your
+                  enquiry and discuss your cleaning requirements. For more
+                  information about how we handle your personal data, please
+                  read our{" "}
+                  <Link
+                    href="/privacy"
+                    className="font-semibold text-[#0757ad] underline underline-offset-4 hover:text-[#06152c] focus-visible:rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#086bd4]"
+                  >
+                    Privacy Policy
+                  </Link>
+                  .
                 </p>
 
                 {/* Preview-only submit button */}
 
-                <button
-                  type="submit"
-                  className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-lg bg-[#086bd4] px-6 py-3.5 text-sm font-semibold text-white sm:w-auto"
-                >
+                <EnquirySubmitButton>
                   Send Your Enquiry
                   <IconArrowUpRight size={19} stroke={1.8} aria-hidden="true" />
-                </button>
+                </EnquirySubmitButton>
               </ContactPreferencesProvider>
             </EnquiryForm>
           </div>
