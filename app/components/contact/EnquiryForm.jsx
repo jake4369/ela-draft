@@ -42,6 +42,7 @@ function getEnquiryValues(form) {
     postcode: formData.get("postcode") ?? "",
     contactMethod: formData.get("contactMethod") ?? "",
     message: formData.get("message") ?? "",
+    website: formData.get("website") ?? "",
   };
 }
 
@@ -80,11 +81,10 @@ export function EnquirySubmitButton({ children }) {
             aria-hidden="true"
             className="
               h-4 w-4 animate-spin rounded-full
-              border-2 border-white/40
-              border-t-white
+              border-2 border-white/40 border-t-white
             "
           />
-          Checking...
+          Sending test enquiry...
         </>
       ) : (
         children
@@ -99,11 +99,18 @@ export default function EnquiryForm({ children }) {
   const feedbackRef = useRef(null);
   const pendingRef = useRef(false);
 
+  // Preserve the same ID and payload when retrying
+  // an unchanged enquiry.
+  const submissionRef = useRef(null);
+
   const [attempts, setAttempts] = useState(0);
   const [errors, setErrors] = useState({});
   const [result, setResult] = useState(null);
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Remount form fields after confirmed email acceptance.
+  const [resetKey, setResetKey] = useState(0);
 
   const [focusRequest, setFocusRequest] = useState(0);
   const [feedbackRequest, setFeedbackRequest] = useState(0);
@@ -111,14 +118,12 @@ export default function EnquiryForm({ children }) {
   const errorEntries = Object.entries(errors);
   const hasErrors = errorEntries.length > 0;
 
-  // Focus the error summary after React renders it.
   useEffect(() => {
     if (focusRequest > 0) {
       errorSummaryRef.current?.focus();
     }
   }, [focusRequest]);
 
-  // Focus the result after the request completes.
   useEffect(() => {
     if (feedbackRequest > 0) {
       feedbackRef.current?.focus();
@@ -150,6 +155,10 @@ export default function EnquiryForm({ children }) {
 
     const form = event.currentTarget;
 
+    // Editing the enquiry creates a new submission.
+    // An unchanged retry retains its previous UUID.
+    submissionRef.current = null;
+
     if (result) {
       setResult(null);
     }
@@ -162,7 +171,6 @@ export default function EnquiryForm({ children }) {
   async function handleSubmit(event) {
     event.preventDefault();
 
-    // Prevent duplicate submissions.
     if (pendingRef.current) return;
 
     const form = event.currentTarget;
@@ -180,8 +188,7 @@ export default function EnquiryForm({ children }) {
       return;
     }
 
-    // Explicitly prevent production submission while
-    // the backend and email integration are unfinished.
+    // Keep public deployments disabled for now.
     if (!isDevelopment) {
       setResult({
         type: "information",
@@ -194,6 +201,25 @@ export default function EnquiryForm({ children }) {
       return;
     }
 
+    // Generate a new UUID for a new or changed enquiry.
+    // Reuse the same UUID when retrying unchanged details.
+    const fingerprint = JSON.stringify(values);
+
+    if (
+      !submissionRef.current ||
+      submissionRef.current.fingerprint !== fingerprint
+    ) {
+      submissionRef.current = {
+        id: crypto.randomUUID(),
+        fingerprint,
+      };
+    }
+
+    const requestValues = {
+      ...values,
+      submissionId: submissionRef.current.id,
+    };
+
     pendingRef.current = true;
     setIsSubmitting(true);
 
@@ -204,21 +230,20 @@ export default function EnquiryForm({ children }) {
     }, REQUEST_TIMEOUT_MS);
 
     try {
-      // Real local API request.
-      // The endpoint currently validates data only.
       const response = await fetch("/api/enquiries", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(requestValues),
         cache: "no-store",
         signal: controller.signal,
       });
 
+      // Firewall responses may not contain JSON.
       const data = await response.json().catch(() => null);
 
-      // Server-side validation errors.
+      // Handle server-side validation errors.
       if (response.status === 422 && data?.code === "VALIDATION_FAILED") {
         const serverErrors = {};
 
@@ -246,48 +271,96 @@ export default function EnquiryForm({ children }) {
         throw new Error("Unexpected validation response.");
       }
 
+      // Handle Vercel Firewall rate limiting.
+      if (response.status === 429) {
+        setResult({
+          type: "error",
+          message:
+            "Too many enquiry attempts have been made recently. " +
+            "Please wait a few minutes before trying again, " +
+            "or call ELA Pressure Washing on 07852 435168. " +
+            "Your entered details have been preserved.",
+        });
+
+        setFeedbackRequest((previous) => previous + 1);
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
 
-      // Accept only the expected validation-only
-      // response from our development endpoint.
-      const isExpectedTestResult =
+      // Validation-only response: no email was sent.
+      const isValidationOnly =
         data?.success === true &&
         data?.validated === true &&
         data?.simulated === true &&
         data?.emailSent === false;
 
-      if (!isExpectedTestResult) {
+      if (isValidationOnly) {
+        setErrors({});
+
+        setResult({
+          type: "information",
+          message:
+            "Server-side validation passed. " +
+            "No enquiry has been sent. " +
+            "Your details have been retained.",
+        });
+
+        setFeedbackRequest((previous) => previous + 1);
+        return;
+      }
+
+      // Genuine Resend test acceptance.
+      // Delivery to Gmail still needs to be verified.
+      const isAcceptedTestEmail =
+        data?.success === true &&
+        data?.testMode === true &&
+        data?.emailAccepted === true &&
+        data?.deliveryConfirmed === false;
+
+      if (!isAcceptedTestEmail) {
         throw new Error("Unexpected server response.");
       }
 
-      // Validation succeeded, but no email was sent.
-      // Deliberately preserve every field value.
+      // Only reset after confirmed Resend acceptance.
+      // This remounts both uncontrolled fields and the
+      // controlled phone/contact-preference components.
+      setResetKey((previous) => previous + 1);
+
+      setAttempts(0);
       setErrors({});
+
+      // Clear the identifier so the next enquiry is new.
+      submissionRef.current = null;
 
       setResult({
         type: "information",
         message:
-          "Server-side validation passed successfully. " +
-          "This is a development test only. " +
-          "No enquiry has been sent and your details " +
-          "have been retained in the form.",
+          "Resend accepted your test enquiry for delivery " +
+          "to the approved test inbox. " +
+          "Email delivery is not yet confirmed. " +
+          "The form has been reset. " +
+          "This is a controlled test, not ELA's live enquiry service.",
       });
 
       setFeedbackRequest((previous) => previous + 1);
     } catch (error) {
       const timedOut = error?.name === "AbortError";
 
+      // Do not claim that an email was not sent.
+      // A timeout can occur after Resend has accepted it.
       setResult({
         type: "error",
         message: timedOut
-          ? "The validation request timed out. " +
+          ? "The test request timed out. " +
+            "We cannot confirm whether Resend accepted the email. " +
             "Your details have been preserved. " +
-            "No email has been sent."
-          : "The validation request could not be completed. " +
+            "Retrying without editing will reuse the same submission identifier."
+          : "The test email request could not be confirmed. " +
             "Your details have been preserved. " +
-            "No email has been sent.",
+            "Retrying without editing will reuse the same submission identifier.",
       });
 
       setFeedbackRequest((previous) => previous + 1);
@@ -371,7 +444,7 @@ export default function EnquiryForm({ children }) {
             </div>
           )}
 
-          {/* Server response feedback */}
+          {/* Submission feedback */}
           {result && (
             <div
               ref={feedbackRef}
@@ -387,20 +460,36 @@ export default function EnquiryForm({ children }) {
             </div>
           )}
 
-          {/* Existing form fields */}
-          {/* Disable all fields during the API request. */}
+          {/* Existing enquiry fields and honeypot */}
           <fieldset
+            key={resetKey}
             disabled={isSubmitting}
             aria-label="Enquiry details"
             className="m-0 min-w-0 space-y-6 border-0 p-0"
           >
+            <div className="sr-only" aria-hidden="true">
+              <label htmlFor="enquiry-website">
+                Website URL — leave this field blank
+              </label>
+
+              <input
+                id="enquiry-website"
+                name="website"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+                defaultValue=""
+                maxLength={200}
+              />
+            </div>
+
             {children}
           </fieldset>
 
-          {/* Accessible pending-state announcement */}
+          {/* Pending-state announcement */}
           {isSubmitting && (
             <p role="status" className="text-sm leading-6 text-slate-600">
-              Checking your enquiry details...
+              Sending your controlled test enquiry...
             </p>
           )}
 
