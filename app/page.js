@@ -1,4 +1,5 @@
 import Hero from "./components/home/Hero";
+import ServiceStrip from "./components/home/ServiceStrip";
 import ServicesOverview from "./components/home/ServiceOverview";
 import BeforeAfterShowcase from "./components/home/BeforeAfterShowcase";
 import WhyChooseELA from "./components/home/WhyChooseELA";
@@ -12,6 +13,8 @@ export default function Home() {
   return (
     <main>
       <Hero />
+
+      <ServiceStrip />
 
       <ServicesOverview />
 
