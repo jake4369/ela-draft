@@ -9,6 +9,15 @@ const SubmissionStateContext = createContext(false);
 
 const isDevelopment = process.env.NODE_ENV === "development";
 
+// This public, build-time flag controls the form interface only.
+// The API independently requires server-side production activation.
+const isProductionFormEnabled =
+  process.env.NODE_ENV === "production" &&
+  process.env.NEXT_PUBLIC_ENQUIRY_FORM_ENABLED === "true";
+
+// Development tests stay available; production remains disabled by default.
+const canSubmitEnquiries = isDevelopment || isProductionFormEnabled;
+
 const REQUEST_TIMEOUT_MS = 15000;
 
 const fieldLabels = {
@@ -54,7 +63,7 @@ export function EnquirySubmitButton({ children }) {
     setIsReady(true);
   }, []);
 
-  const isDisabled = !isReady || isSubmitting || !isDevelopment;
+  const isDisabled = !isReady || isSubmitting || !canSubmitEnquiries;
 
   return (
     <button
@@ -84,7 +93,9 @@ export function EnquirySubmitButton({ children }) {
               border-2 border-white/40 border-t-white
             "
           />
-          Sending test enquiry...
+          {isDevelopment
+            ? "Sending test enquiry..."
+            : "Sending your enquiry..."}
         </>
       ) : (
         children
@@ -188,8 +199,8 @@ export default function EnquiryForm({ children }) {
       return;
     }
 
-    // Keep public deployments disabled for now.
-    if (!isDevelopment) {
+    // Keep public deployments disabled until explicitly activated.
+    if (!canSubmitEnquiries) {
       setResult({
         type: "information",
         message:
@@ -286,6 +297,20 @@ export default function EnquiryForm({ children }) {
         return;
       }
 
+      // The API can independently remain locked even if the browser
+      // interface was accidentally enabled in a deployment.
+      if (response.status === 503 && data?.code === "SERVICE_NOT_AVAILABLE") {
+        setResult({
+          type: "information",
+          message:
+            "Online enquiries are not yet available. " +
+            "Please call ELA Pressure Washing on 07852 435168.",
+        });
+
+        setFeedbackRequest((previous) => previous + 1);
+        return;
+      }
+
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}`);
       }
@@ -320,7 +345,19 @@ export default function EnquiryForm({ children }) {
         data?.emailAccepted === true &&
         data?.deliveryConfirmed === false;
 
-      if (!isAcceptedTestEmail) {
+      // Production acceptance: the provider accepted the email,
+      // but final inbox delivery has not yet been confirmed.
+      const isAcceptedProductionEmail =
+        data?.success === true &&
+        data?.productionMode === true &&
+        data?.emailAccepted === true &&
+        data?.deliveryConfirmed === false;
+
+      const isExpectedAcceptance = isDevelopment
+        ? isAcceptedTestEmail
+        : isAcceptedProductionEmail;
+
+      if (!isExpectedAcceptance) {
         throw new Error("Unexpected server response.");
       }
 
@@ -337,12 +374,16 @@ export default function EnquiryForm({ children }) {
 
       setResult({
         type: "information",
-        message:
-          "Resend accepted your test enquiry for delivery " +
-          "to the approved test inbox. " +
-          "Email delivery is not yet confirmed. " +
-          "The form has been reset. " +
-          "This is a controlled test, not ELA's live enquiry service.",
+        message: isDevelopment
+          ? "Resend accepted your test enquiry for delivery " +
+            "to the approved test inbox. " +
+            "Email delivery is not yet confirmed. " +
+            "The form has been reset. " +
+            "This is a controlled test, not ELA's live enquiry service."
+          : "Thank you. Your enquiry has been accepted for delivery " +
+            "to ELA Pressure Washing. " +
+            "We aim to respond as soon as possible. " +
+            "For urgent enquiries, please call 07852 435168.",
       });
 
       setFeedbackRequest((previous) => previous + 1);
@@ -351,17 +392,31 @@ export default function EnquiryForm({ children }) {
 
       // Do not claim that an email was not sent.
       // A timeout can occur after Resend has accepted it.
-      setResult({
-        type: "error",
-        message: timedOut
+      let message;
+
+      if (isDevelopment) {
+        message = timedOut
           ? "The test request timed out. " +
             "We cannot confirm whether Resend accepted the email. " +
             "Your details have been preserved. " +
             "Retrying without editing will reuse the same submission identifier."
           : "The test email request could not be confirmed. " +
             "Your details have been preserved. " +
-            "Retrying without editing will reuse the same submission identifier.",
-      });
+            "Retrying without editing will reuse the same submission identifier.";
+      } else {
+        message = timedOut
+          ? "The enquiry request timed out, and we cannot confirm " +
+            "whether it was accepted. " +
+            "Your details have been preserved. " +
+            "You can retry without editing, using the same enquiry reference, " +
+            "or call ELA Pressure Washing on 07852 435168."
+          : "We could not confirm whether your enquiry was accepted. " +
+            "Your details have been preserved. " +
+            "You can retry without editing, using the same enquiry reference, " +
+            "or call ELA Pressure Washing on 07852 435168.";
+      }
+
+      setResult({ type: "error", message });
 
       setFeedbackRequest((previous) => previous + 1);
     } finally {
@@ -489,12 +544,14 @@ export default function EnquiryForm({ children }) {
           {/* Pending-state announcement */}
           {isSubmitting && (
             <p role="status" className="text-sm leading-6 text-slate-600">
-              Sending your controlled test enquiry...
+              {isDevelopment
+                ? "Sending your controlled test enquiry..."
+                : "Sending your enquiry..."}
             </p>
           )}
 
-          {/* Production fallback */}
-          {!isDevelopment && (
+          {/* Fallback while the public enquiry form is disabled */}
+          {!canSubmitEnquiries && (
             <p className="text-sm leading-6 text-slate-600">
               Online enquiries are not yet available. Please call{" "}
               <a

@@ -3,10 +3,19 @@ import { NextResponse } from "next/server";
 import { validateEnquiry } from "@/app/components/contact/enquiryValidation";
 
 import { sendControlledTestEmail } from "./sendTestEmail";
+import { sendProductionEnquiryEmail } from "./sendProductionEmail";
 
 const MAX_REQUEST_BYTES = 12_000;
 
 const isDevelopment = process.env.NODE_ENV === "development";
+const isProduction = process.env.NODE_ENV === "production";
+
+// Production sending requires TWO explicit settings.
+// Neither is being enabled at this stage.
+const productionEmailEnabled =
+  isProduction &&
+  process.env.ENQUIRY_EMAIL_MODE === "production" &&
+  process.env.ENQUIRY_PRODUCTION_ENABLED === "true";
 
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -51,8 +60,7 @@ function getAllowedOrigins() {
 function isTrustedOrigin(request) {
   const origin = request.headers.get("origin");
 
-  // Retain support for command-line validation tests
-  // without an Origin header during development.
+  // Preserve development-only command-line validation.
   if (!origin) {
     return isDevelopment;
   }
@@ -60,7 +68,6 @@ function isTrustedOrigin(request) {
   return getAllowedOrigins().has(origin);
 }
 
-// Read the request incrementally, enforcing its byte limit.
 async function readLimitedBody(request) {
   if (!request.body) {
     return {
@@ -86,7 +93,7 @@ async function readLimitedBody(request) {
         try {
           await reader.cancel();
         } catch {
-          // The request will still be rejected.
+          // Request will still be rejected.
         }
 
         return {
@@ -130,7 +137,7 @@ async function readLimitedBody(request) {
 }
 
 export async function POST(request) {
-  // Reject origins that are not explicitly trusted.
+  // Reject untrusted origins.
   if (!isTrustedOrigin(request)) {
     return jsonResponse(
       {
@@ -142,8 +149,8 @@ export async function POST(request) {
     );
   }
 
-  // Never enable email delivery on the deployed website yet.
-  if (!isDevelopment) {
+  // Production remains disabled until explicitly activated.
+  if (!isDevelopment && !productionEmailEnabled) {
     return jsonResponse(
       {
         success: false,
@@ -172,7 +179,6 @@ export async function POST(request) {
     );
   }
 
-  // Reject invalid or oversized Content-Length values.
   const contentLength = request.headers.get("content-length");
 
   if (contentLength !== null) {
@@ -201,7 +207,6 @@ export async function POST(request) {
     }
   }
 
-  // Check the actual body size while reading.
   const bodyResult = await readLimitedBody(request);
 
   if (bodyResult.error) {
@@ -244,7 +249,6 @@ export async function POST(request) {
     );
   }
 
-  // Reject fields we did not explicitly permit.
   const unexpectedFields = Object.keys(payload).filter(
     (field) => !expectedFields.includes(field),
   );
@@ -260,7 +264,6 @@ export async function POST(request) {
     );
   }
 
-  // Every supplied field must be a string.
   for (const field of expectedFields) {
     if (payload[field] !== undefined && typeof payload[field] !== "string") {
       return jsonResponse(
@@ -278,16 +281,14 @@ export async function POST(request) {
     expectedFields.map((field) => [field, payload[field] ?? ""]),
   );
 
-  // Honeypot must be checked before email delivery.
+  // Discard honeypot submissions before delivery.
   if (values.website.trim()) {
     console.info("[ELA enquiries] Honeypot submission discarded.");
 
-    // Keep the trap private by returning the same
-    // public shape as a validation-only success.
     return jsonResponse(validationOnlyResponse);
   }
 
-  // Independently validate the customer information.
+  // Independently validate customer information.
   const errors = validateEnquiry(values);
 
   if (Object.keys(errors).length > 0) {
@@ -302,14 +303,12 @@ export async function POST(request) {
     );
   }
 
-  // Until explicitly enabled, preserve validation-only mode.
-  if (process.env.ENQUIRY_EMAIL_MODE !== "test") {
+  // Preserve development validation-only behaviour.
+  if (isDevelopment && process.env.ENQUIRY_EMAIL_MODE !== "test") {
     return jsonResponse(validationOnlyResponse);
   }
 
-  // When sending actual test emails, require an Origin
-  // header that matches an explicitly configured origin.
-  // This is defence-in-depth, not authentication.
+  // Sending requires an explicitly trusted Origin.
   const origin = request.headers.get("origin");
 
   if (!origin || !getAllowedOrigins().has(origin)) {
@@ -323,8 +322,7 @@ export async function POST(request) {
     );
   }
 
-  // Each email must have a UUID so retries can reuse
-  // the same Resend idempotency key.
+  // Every intended email requires a UUID v4.
   if (!UUID_PATTERN.test(values.submissionId)) {
     return jsonResponse(
       {
@@ -337,33 +335,45 @@ export async function POST(request) {
   }
 
   try {
-    const delivery = await sendControlledTestEmail(values, values.submissionId);
+    // Keep existing development test delivery unchanged.
+    // Production uses the separately guarded sender.
+    const delivery = isDevelopment
+      ? await sendControlledTestEmail(values, values.submissionId)
+      : await sendProductionEnquiryEmail(values, values.submissionId);
 
     if (!delivery.accepted || !delivery.emailId) {
       throw new Error("Email acceptance was not confirmed.");
     }
 
-    // Resend has accepted the email request.
-    // Delivery to Gmail is not yet confirmed.
+    if (isDevelopment) {
+      return jsonResponse({
+        success: true,
+        testMode: true,
+        emailAccepted: true,
+        deliveryConfirmed: false,
+        message: "Resend accepted the test enquiry for delivery.",
+      });
+    }
+
+    // Resend accepted the production request,
+    // but final inbox delivery is not yet confirmed.
     return jsonResponse({
       success: true,
-      testMode: true,
+      productionMode: true,
       emailAccepted: true,
       deliveryConfirmed: false,
-      message: "Resend accepted the test enquiry for delivery.",
+      message: "Your enquiry has been accepted for delivery.",
     });
   } catch {
-    // An unsuccessful or interrupted request may have
-    // an uncertain outcome. Do not claim no email was sent.
-    console.error(
-      "[ELA enquiries] Test email acceptance could not be confirmed.",
-    );
+    // The request may have succeeded before a connection
+    // failed. Never claim that no email was sent.
+    console.error("[ELA enquiries] Email acceptance could not be confirmed.");
 
     return jsonResponse(
       {
         success: false,
         code: "EMAIL_ACCEPTANCE_UNCONFIRMED",
-        message: "The test email request could not be confirmed.",
+        message: "The email request could not be confirmed.",
       },
       502,
     );
