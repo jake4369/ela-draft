@@ -51,10 +51,17 @@ export default function Hero() {
             <span className="text-[#5ab2ff]">difference.</span>
           </h1>
 
-          <p className="mt-6 max-w-xl text-pretty text-base leading-8 text-white/90 sm:text-lg">
+          {/* <p className="mt-6 max-w-xl text-pretty text-base leading-8 text-white/90 sm:text-lg">
             Professional pressure washing, steam cleaning and specialist
             exterior care for homes and businesses across Wolverhampton and the
             West Midlands.
+          </p> */}
+
+          <p className="mt-6 max-w-xl text-pretty text-base leading-8 text-white/90 sm:text-lg">
+            From specialist new-build brickwork cleaning to driveways, patios
+            and commercial pressure washing, we provide professional exterior
+            cleaning for homeowners, builders and businesses across
+            Wolverhampton and the West Midlands.
           </p>
 
           {/* Hero CTA buttons */}
