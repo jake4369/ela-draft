@@ -17,9 +17,9 @@ export default function Home() {
 
       <ServiceStrip />
 
-      <BrickworkFeature />
-
       <ServicesOverview />
+
+      <BrickworkFeature />
 
       <BeforeAfterShowcase />
 
