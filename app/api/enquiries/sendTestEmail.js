@@ -13,6 +13,15 @@
  * and spam checks have passed.
  */
 
+import { createElement } from "react";
+import { render } from "react-email";
+import EmailTemplateImport from "../../../emails/EnquiryNotification.jsx";
+
+const EnquiryNotification =
+  typeof EmailTemplateImport === "function"
+    ? EmailTemplateImport
+    : EmailTemplateImport?.default;
+
 const APPROVED_TEST_RECIPIENT = "jsamuelsdev@gmail.com";
 
 const FROM_ADDRESS =
@@ -84,6 +93,12 @@ export async function sendControlledTestEmail(values, submissionId) {
     throw new Error("A valid submission identifier is required.");
   }
 
+  if (typeof EnquiryNotification !== "function") {
+    throw new Error("The enquiry email template could not be loaded.");
+  }
+
+  const html = await render(createElement(EnquiryNotification, values));
+
   const emailPayload = {
     from: FROM_ADDRESS,
 
@@ -95,6 +110,7 @@ export async function sendControlledTestEmail(values, submissionId) {
     subject: `[ELA TEST] New enquiry — ${safeSubjectText(values.name)}`,
 
     text: formatEnquiry(values),
+    html,
   };
 
   // The key identifies one specific email.

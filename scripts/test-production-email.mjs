@@ -101,6 +101,41 @@ try {
 
   assert.ok(payload.text.includes("Controlled production sender test."));
 
+  // Verify the branded HTML email is included.
+  assert.equal(typeof payload.html, "string");
+
+  assert.ok(
+    payload.html.includes("ELA PRESSURE WASHING"),
+    "HTML should include the ELA branding.",
+  );
+
+  assert.ok(
+    payload.html.includes("New website enquiry."),
+    "HTML should include the notification heading.",
+  );
+
+  assert.ok(
+    payload.html.includes("Production Sender Test"),
+    "HTML should include the customer's name.",
+  );
+
+  assert.ok(
+    payload.html.includes("mailto:test@example.com"),
+    "HTML should include the customer's email link.",
+  );
+
+  assert.ok(
+    payload.html.includes("WV1 1AA"),
+    "HTML should include the property postcode.",
+  );
+
+  assert.ok(
+    payload.html.includes("Controlled production sender test."),
+    "HTML should include the project description.",
+  );
+
+  console.log("PASS: Branded HTML and plain-text fallback included.");
+
   assert.equal(
     request.headers["Idempotency-Key"],
     `ela-contact-production/${submissionId}`,
