@@ -13,7 +13,7 @@ export default function BrickworkFeature() {
           {/* Section content */}
           <div className="max-w-xl">
             <p className="mb-4 text-xs font-semibold uppercase tracking-[0.18em] text-[#086bd4] sm:text-sm">
-              New-Build Brickwork Cleaning
+              New-Build Brickwork & Exterior Cleaning
             </p>
 
             <h2
@@ -25,15 +25,17 @@ export default function BrickworkFeature() {
 
             <div className="mt-5 space-y-4 text-pretty text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
               <p>
-                Professional brickwork cleaning for housebuilders, developers
-                and bricklaying contractors across Wolverhampton and the West
-                Midlands.
+                Specialist new-build brickwork and exterior cleaning for
+                housebuilders, developers and bricklaying contractors across
+                Wolverhampton and the West Midlands.
               </p>
 
               <p>
-                From individual plots to larger developments, we take a
-                considered approach to cleaning newly built brickwork, with
-                methods suited to the materials and condition of each project.
+                From individual plots to larger developments, our work can
+                extend beyond brickwork to driveways, pathways and other
+                exterior surfaces. We take a considered approach to every
+                project, selecting cleaning methods suited to the materials and
+                condition of each surface.
               </p>
             </div>
 
@@ -42,7 +44,7 @@ export default function BrickworkFeature() {
               href="/contact"
               className="group mt-8 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-lg bg-[#086bd4] px-5 py-3 text-center text-sm font-semibold text-white transition-colors duration-200 hover:bg-[#075db5] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#086bd4] sm:w-auto sm:px-7"
             >
-              Discuss Your Brickwork Project
+              Discuss Your Project
               <IconArrowUpRight
                 size={18}
                 stroke={1.8}
