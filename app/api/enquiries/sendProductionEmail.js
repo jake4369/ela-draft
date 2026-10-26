@@ -15,6 +15,15 @@
  * completed validation, origin and spam checks.
  */
 
+import { createElement } from "react";
+import { render } from "react-email";
+import EmailTemplateImport from "../../../emails/EnquiryNotification.jsx";
+
+const EnquiryNotification =
+  typeof EmailTemplateImport === "function"
+    ? EmailTemplateImport
+    : EmailTemplateImport?.default;
+
 const APPROVED_PRODUCTION_RECIPIENT = "elapressurewashing@gmail.com";
 
 const FROM_ADDRESS =
@@ -84,6 +93,12 @@ export async function sendProductionEnquiryEmail(values, submissionId) {
     throw new Error("A valid submission identifier is required.");
   }
 
+  if (typeof EnquiryNotification !== "function") {
+    throw new Error("The enquiry email template could not be loaded.");
+  }
+
+  const html = await render(createElement(EnquiryNotification, values));
+
   const emailPayload = {
     from: FROM_ADDRESS,
 
@@ -95,6 +110,7 @@ export async function sendProductionEnquiryEmail(values, submissionId) {
     subject: `New website enquiry — ${safeSubjectText(values.name)}`,
 
     text: formatProductionEnquiry(values),
+    html,
   };
 
   // Retrying an unchanged enquiry must reuse this key.
