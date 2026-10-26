@@ -58,10 +58,10 @@ export default function Hero() {
           </p> */}
 
           <p className="mt-6 max-w-xl text-pretty text-base leading-8 text-white/90 sm:text-lg">
-            From specialist new-build brickwork cleaning to driveways, patios
-            and commercial pressure washing, we provide professional exterior
-            cleaning for homeowners, builders and businesses across
-            Wolverhampton and the West Midlands.
+            Professional driveway and patio cleaning, roof cleaning and
+            specialist exterior care for homeowners across Wolverhampton and the
+            West Midlands. We also provide new build and heritage brickwork and
+            commercial cleaning services for businesses and contractors.
           </p>
 
           {/* Hero CTA buttons */}
